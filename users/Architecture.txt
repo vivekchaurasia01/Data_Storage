@@ -1,0 +1,46 @@
+## Architecture
+
+This project follows a simple layered architecture where a manager service handles user operations and stores data in memory.
+
+Application
+     │
+     ▼
+Manager (Service Layer)
+     │
+     ▼
+User Data (In-memory Slice)
+
+
+
+### 1. Model Layer
+
+Defines the data structure of the application.
+
+Example:
+- User struct
+
+### 2. Service Layer
+
+Contains business logic.
+
+Responsibilities:
+- Add user
+- Validate user data
+- Search users
+
+Implemented using the `Manager` struct.
+
+### 3. Data Layer
+
+Stores user data using an in-memory slice.
+
+Example:
+`[]User`
+
+
+## Application Flow
+
+1. The application creates a Manager instance.
+2. The Manager handles user operations.
+3. User data is stored in a slice.
+4. The Manager searches or updates the slice when required.
