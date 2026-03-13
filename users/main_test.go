@@ -81,7 +81,7 @@ func TestAddUserEmptyUserName(t *testing.T){
 	if err == nil{
 		t.Error("no error returned for invalid firstname")
 	}else{
-		expectedErr := "invalid first name:"
+		expectedErr := "invalid first name:\"\""
 		if err.Error() != expectedErr {   // error is interface : This converts the error object into its textual message.
 			t.Errorf("bad error text,wanted:%s,got:%s",expectedErr,err)
 		}
@@ -106,7 +106,7 @@ func TestAddUserEmptyLastName(t *testing.T){
 	if err == nil{    //AddUser accepted invalid lastname.
 		t.Error("no error returned for invalid lastname")
 	}else{ 
-		expectedErr := "invalid lastname:\"\""
+		expectedErr := "invalid last name:\"\""
 		if err.Error() != expectedErr {   // error is interface : This converts the error object into its textual message.
 			t.Errorf("bad error text,wanted:%s,got:%s",expectedErr,err)
 		}
