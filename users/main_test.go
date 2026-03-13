@@ -23,8 +23,6 @@ func TestAddUser (t *testing.T){
 	if err != nil{
 		t.Fatalf("error while adding the user : %v",err)
 	}
-
-	// First lets make sure we have only one idiot at a time..
 	if len(testManager.users) != 1{
 		t.Errorf("bad test manager user count ,wanted:%d,got :%d",1,len(testManager.users))
 		if len(testManager.users) < 1{
@@ -41,11 +39,10 @@ func TestAddUser (t *testing.T){
 
 	foundUser := testManager.users[0]
 
-	// Now lets just comapre our found idiot is same as expected idiot.
+	// Now lets just compare our found idiot is same as expected idiot.
 	if !reflect.DeepEqual(expectedUser,foundUser){
 		t.Errorf("added user data is not correct,wanted :%+v\n,got : %+v",expectedUser,foundUser) // %+v ---> Prints struct field names along with their values
 	}
-
 }
 
 func TestAddUserInvalidEmail(t *testing.T){    //testing.T is the test context object.
@@ -57,7 +54,7 @@ func TestAddUserInvalidEmail(t *testing.T){    //testing.T is the test context o
 
 	// Lets add user with this bad Email...
 	err := testManager.AddUser(testFirstName,testLastName,testEmail)
-	if err == nil{    //AddUser accepted invalid email.
+	if err == nil{
 		t.Error("no error returned for invalid email")
 	}else{
 		expectedErr := "invalid email: vivek"
@@ -69,3 +66,84 @@ func TestAddUserInvalidEmail(t *testing.T){    //testing.T is the test context o
 		t.Errorf("bad test manager user count, wanted :%d,got :%d",0,len(testManager.users))
 	}
 }
+func TestAddUserEmptyUserName(t *testing.T){
+	testManager := NewManager()
+
+	testFirstName := ""
+	testLastName := "Userman"
+	testEmail,err := mail.ParseAddress("VivekChaurasia01@gmail.com")
+	if err != nil{
+		t.Fatalf("error while parsing the email : %v",err)
+	}
+
+	// Lets add user with this bad Email...
+	err = testManager.AddUser(testFirstName,testLastName,testEmail.String())
+	if err == nil{
+		t.Error("no error returned for invalid firstname")
+	}else{
+		expectedErr := "invalid first name:"
+		if err.Error() != expectedErr {   // error is interface : This converts the error object into its textual message.
+			t.Errorf("bad error text,wanted:%s,got:%s",expectedErr,err)
+		}
+	}
+	if len(testManager.users) >0 {
+		t.Errorf("bad test manager user count, wanted :%d,got :%d",0,len(testManager.users))
+	}
+}
+
+func TestAddUserEmptyLastName(t *testing.T){
+	testManager := NewManager()
+
+	testFirstName := "test"
+	testLastName := ""
+	testEmail,err := mail.ParseAddress("VivekChaurasia01@gmail.com")
+	if err != nil{
+		t.Fatalf("error parsing test email address : %v",err)
+	}
+
+	// Lets add user with this bad Email...
+	err = testManager.AddUser(testFirstName,testLastName,testEmail.String())
+	if err == nil{    //AddUser accepted invalid lastname.
+		t.Error("no error returned for invalid lastname")
+	}else{ 
+		expectedErr := "invalid lastname:\"\""
+		if err.Error() != expectedErr {   // error is interface : This converts the error object into its textual message.
+			t.Errorf("bad error text,wanted:%s,got:%s",expectedErr,err)
+		}
+	}
+	if len(testManager.users) >0 {
+		t.Errorf("bad test manager user count, wanted :%d,got :%d",0,len(testManager.users))
+	}
+}
+func TestAddUserDuplicateName(t *testing.T){
+	testManager := NewManager()
+
+	testFirstName := "test"
+	testLastName := "Userman"
+	testEmail,err := mail.ParseAddress("VivekChaurasia01@gmail.com")
+
+	if err != nil{
+		t.Fatalf("error parsing test email address : %v",err)
+	}
+
+	// Lets add user with this bad Email...
+	err = testManager.AddUser(testFirstName,testLastName,testEmail.String())
+	if err != nil{
+		t.Fatalf("error creating user : %v",err)
+	}
+
+	err = testManager.AddUser(testFirstName,testLastName,testEmail.String())
+	if err == nil{
+		t.Error("no error returned for the duplicate user")
+	}else{
+		expectedErr := "User with this name already exist:"
+		if err.Error() != expectedErr {
+			t.Errorf("bad error text,wanted :%s,got :%s",expectedErr,err)
+		}
+	}
+
+	if len(testManager.users) != 1 {
+		t.Errorf("bad test manager user count, wanted :%d,got :%d",1,len(testManager.users))
+	}
+}
+

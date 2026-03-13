@@ -24,10 +24,10 @@ func NewManager() *Manager{
 
 func(m *Manager) AddUser(firstName string, lastName string, email string) error {
 	if firstName == ""{
-		return fmt.Errorf("invalid first name : %q",firstName)
+		return fmt.Errorf("invalid first name:%q",firstName)
 	}
 	if lastName == ""{
-		return fmt.Errorf("invalid last name : %q",lastName)
+		return fmt.Errorf("invalid last name:%q",lastName)
 	}
 	existingUser,err := m.GetUserByName(firstName,lastName)
 	if err != nil && !errors.Is(err,ErrNoResultFound) {  // we have to diffrenciate between system error and this particular duplicate issue error.
