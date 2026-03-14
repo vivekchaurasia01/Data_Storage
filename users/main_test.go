@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/mail"
 	"reflect"
 	"testing"
@@ -144,6 +145,87 @@ func TestAddUserDuplicateName(t *testing.T){
 
 	if len(testManager.users) != 1 {
 		t.Errorf("bad test manager user count, wanted :%d,got :%d",1,len(testManager.users))
+	}
+}
+func TestGetUserByName(t *testing.T){
+	testManager := NewManager()
+	
+	err := testManager.AddUser("vivek","chaurasia","vivek@gmial.com")
+	if err != nil{
+		t.Fatalf("error while adding test user : %v",err)
+	}
+
+	err = testManager.AddUser("Aman","Patel","vivek@gmial.com")
+	if err != nil{
+		t.Fatalf("error while adding test user : %v",err)
+	}
+
+	err = testManager.AddUser("Bablu","chaurasia","vivek@gmial.com")
+	if err != nil{
+		t.Fatalf("error while adding test user : %v",err)
+	}
+
+	err = testManager.AddUser("Luther","Boggarapu","vivek@gmial.com")
+	if err != nil{
+		t.Fatalf("error while adding test user : %v",err)
+	}
+
+	err = testManager.AddUser("Shivam","Yadav","vivek@gmial.com")
+	if err != nil{
+		t.Fatalf("error while adding test user : %v",err)
+	}
+
+	tests := map[string]struct{
+		first string
+		last string
+		expected *User
+		expectedErr error
+	}{
+		"Simple LookUp":{
+			first : "vivek",
+			last : "chaurasia",
+			expected: &testManager.users[0],
+			expectedErr: nil,
+		},
+		"Last Element Lookup":{
+			first : "Bablu",
+			last : "chaurasia",
+			expected: &testManager.users[2],
+			expectedErr: nil,
+		},
+		"No Match LookUp":{
+			first : "Zoro",
+			last : "Luffy",
+			expected: nil,
+			expectedErr: ErrNoResultFound,
+		},
+		"Partial Match LookUp":{
+			first : "vivek",
+			last : "vivek",
+			expected: nil,
+			expectedErr: ErrNoResultFound,
+		},
+		"Empty First Name":{
+			first : "",
+			last : "chaurasia",
+			expected: nil,
+			expectedErr: ErrNoResultFound,
+		},
+		"Empty Last Name":{
+			first : "shivam",
+			last : "",
+			expected: nil,
+			expectedErr: ErrNoResultFound,
+		},
+	}
+	for name,test := range tests {
+		result,err := testManager.GetUserByName(test.first,test.last)
+		if !reflect.DeepEqual(result,test.expected){
+			t.Errorf("%s :invalid result\ngot : %+v\nWanted : %+v\n",name,result,test.expected)
+		}
+		if !errors.Is(err,test.expectedErr){
+			t.Errorf("%s:Invalid error result \ngot :%v\nWanted: %v",name,result,test.expectedErr)
+		}
 	}
 }
 
